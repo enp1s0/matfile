@@ -65,8 +65,7 @@ void save_dense(
 	}
 }
 
-template <class T>
-void load_size(
+inline void load_size(
 		std::uint64_t& m,
 		std::uint64_t& n,
 		const std::string mat_name
@@ -83,8 +82,7 @@ void load_size(
 	n = file_header.n;
 }
 
-template <class T>
-detail::file_header load_header(
+inline detail::file_header load_header(
 		const std::string mat_name
 		) {
 	std::ifstream ifs(mat_name, std::ios::binary);
