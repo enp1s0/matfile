@@ -63,6 +63,7 @@ void save_dense(
 			ofs.write(reinterpret_cast<const char*>(&v), sizeof(T));
 		}
 	}
+	ofs.close();
 }
 
 inline void load_size(
@@ -77,6 +78,7 @@ inline void load_size(
 
 	detail::file_header file_header;
 	ifs.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
+	ifs.close();
 
 	m = file_header.m;
 	n = file_header.n;
@@ -92,6 +94,7 @@ inline detail::file_header load_header(
 
 	detail::file_header file_header;
 	ifs.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
+	ifs.close();
 
 	return file_header;
 }
@@ -124,6 +127,7 @@ void load_dense(
 			mat_ptr[index] = v;
 		}
 	}
+	ifs.close();
 }
 } // namespace matfile
 } // namespace mtk
