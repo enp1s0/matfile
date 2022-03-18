@@ -59,18 +59,6 @@ pybind11::array_t<T, pybind11::array::f_style | pybind11::array::forcecast> load
 	}
 }
 
-pybind11::array_t<float, pybind11::array::f_style | pybind11::array::forcecast> load_dense_fp32(
-	const std::string file_name
-	) {
-	return load_dense<float>(file_name);
-}
-
-pybind11::array_t<double, pybind11::array::f_style | pybind11::array::forcecast> load_dense_fp64(
-	const std::string file_name
-	) {
-	return load_dense<double>(file_name);
-}
-
 unsigned get_fp_bit(const std::string file_name) {
 	const auto info = mtk::matfile::load_header(file_name);
 
@@ -84,10 +72,10 @@ unsigned get_fp_bit(const std::string file_name) {
 PYBIND11_MODULE(matfile, m) {
     m.doc() = "matfile";
 
-    m.def("save_dense"         , &save_dense<double>, "save_dense"     , pybind11::arg("matrix"), pybind11::arg("file_name"));
-    m.def("save_dense"         , &save_dense<float >, "save_dense"     , pybind11::arg("matrix"), pybind11::arg("file_name"));
-    m.def("load_dense_fp32"    , &load_dense_fp32   , "load_dense_fp32", pybind11::arg("file_name"));
-    m.def("load_dense_fp64"    , &load_dense_fp64   , "load_dense_fp64", pybind11::arg("file_name"));
+    m.def("save_dense_fp32"    , &save_dense<float >, "save_dense_fp32", pybind11::arg("matrix"), pybind11::arg("file_name"));
+    m.def("save_dense_fp64"    , &save_dense<double>, "save_dense_fp64", pybind11::arg("matrix"), pybind11::arg("file_name"));
+    m.def("load_dense_fp32"    , &load_dense<float >, "load_dense_fp32", pybind11::arg("file_name"));
+    m.def("load_dense_fp64"    , &load_dense<double>, "load_dense_fp64", pybind11::arg("file_name"));
     m.def("get_fp_bit"         , &get_fp_bit        , "get_fp_bit"     , pybind11::arg("file_name"));
 }
 
