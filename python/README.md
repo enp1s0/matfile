@@ -3,8 +3,8 @@
 
 ## Installation
 ```bash
-pip install pybind11==2.8.0
-pip install .
+pip install pybind11
+pip install -e .
 ```
 
 ## Sample code
