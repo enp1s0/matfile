@@ -30,6 +30,7 @@ void test(const std::uint64_t m, const std::uint64_t n) {
 		load_m, load_n,
 		file_name
 		);
+	std::printf("shape = (%lu, %lu)\n", load_m, load_n);
 
 	std::unique_ptr<T[]> load_mat(new T[load_m * load_n]);
 
