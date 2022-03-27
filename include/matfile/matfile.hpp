@@ -66,9 +66,10 @@ void save_dense(
 	ofs.close();
 }
 
+template <class INT_T>
 inline void load_size(
-		std::uint64_t& m,
-		std::uint64_t& n,
+		INT_T& m,
+		INT_T& n,
 		const std::string mat_name
 		) {
 	std::ifstream ifs(mat_name, std::ios::binary);
