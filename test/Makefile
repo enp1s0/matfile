@@ -1,7 +1,7 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -I../include
+CXXFLAGS=-std=c++17 -I../include
 
-TARGETS=dense.test
+TARGETS=dense.test matrix_market.test
 
 all: $(TARGETS)
 
@@ -9,4 +9,4 @@ all: $(TARGETS)
 	$(CXX) $< -o $@ $(CXXFLAGS)
   
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGETS)
