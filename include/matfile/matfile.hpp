@@ -8,6 +8,9 @@ namespace mtk {
 namespace matfile {
 namespace detail {
 struct file_header {
+#ifndef OLD_VERSION
+	std::uint32_t version;
+#endif
 	enum data_t {
 		fp32,
 		fp64
@@ -38,6 +41,25 @@ inline std::string get_data_type_str(const file_header::data_t data_t) {
 	if (data_t == file_header::data_t::fp32) return "float";
 	else return "double";
 }
+
+inline std::uint32_t get_version_uint32(
+		const std::uint32_t major,
+		const std::uint32_t minor
+		) {
+	return major * 1000 + minor;
+}
+
+inline std::uint32_t get_minor_version(
+		const std::uint32_t version
+		) {
+	return version % 1000;
+}
+
+inline std::uint32_t get_major_version(
+		const std::uint32_t version
+		) {
+	return version / 1000;
+}
 } // namespace detail
 
 template <class T>
@@ -53,6 +75,9 @@ void save_dense(
 	file_header.m = m;
 	file_header.n = n;
 	file_header.matrix_type = detail::file_header::dense;
+#ifndef OLD_VERSION
+	file_header.version = detail::get_version_uint32(0, 1);
+#endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
 	ofs.write(reinterpret_cast<char*>(&file_header), sizeof(file_header));
