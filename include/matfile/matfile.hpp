@@ -8,7 +8,7 @@ namespace mtk {
 namespace matfile {
 namespace detail {
 struct file_header {
-#ifndef OLD_VERSION
+#ifndef MATFILE_USE_OLD_FORMAT
 	std::uint32_t version;
 #endif
 	enum data_t {
