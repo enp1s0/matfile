@@ -298,6 +298,34 @@ void load_matrix(
 	ifs.close();
 }
 } // namespace matrix_market
+template <class T>
+inline void print_matrix(
+		const std::size_t m,
+		const std::size_t n,
+		const T* const ptr,
+		const std::size_t ld,
+		const std::string name = ""
+		) {
+	if (name.length() != 0) {
+		std::printf("%s = \n", name.c_str());
+	}
+	for (std::size_t mi = 0; mi < m; mi++) {
+		for (std::size_t ni = 0; ni < n; ni++) {
+			const auto v = ptr[mi + ni * ld];
+			std::printf("%+.3e ", v);
+		}
+		std::printf("\n");
+	}
+}
+template <class T>
+inline void print_matrix(
+		const std::size_t m,
+		const std::size_t n,
+		const T* const ptr,
+		const std::string name = ""
+		) {
+	print_matrix(m, n, ptr, m, name);
+}
 } // namespace matfile
 } // namespace mtk
 #endif
