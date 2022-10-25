@@ -13,7 +13,8 @@ struct file_header {
 #endif
 	enum data_t {
 		fp32,
-		fp64
+		fp64,
+		fp128
 	} data_type;
 	enum matrix_t {
 		dense
@@ -29,17 +30,20 @@ struct file_header {
 
 template <class T>
 inline file_header::data_t get_data_type();
-template <> inline file_header::data_t get_data_type<double>() {return file_header::fp64;};
-template <> inline file_header::data_t get_data_type<float >() {return file_header::fp32;};
+template <> inline file_header::data_t get_data_type<long double>() {return file_header::fp128;};
+template <> inline file_header::data_t get_data_type<double     >() {return file_header::fp64;};
+template <> inline file_header::data_t get_data_type<float      >() {return file_header::fp32;};
 
 template <class T>
 inline std::string get_type_name_str();
-template <> inline std::string get_type_name_str<double>() {return "double";}
-template <> inline std::string get_type_name_str<float >() {return "float" ;}
+template <> inline std::string get_type_name_str<long double>() {return "long double";}
+template <> inline std::string get_type_name_str<double     >() {return "double";}
+template <> inline std::string get_type_name_str<float      >() {return "float" ;}
 
 inline std::string get_data_type_str(const file_header::data_t data_t) {
 	if (data_t == file_header::data_t::fp32) return "float";
-	else return "double";
+	else if (data_t == file_header::data_t::fp64) return "double";
+	else return "long double";
 }
 
 inline std::uint32_t get_version_uint32(
@@ -76,7 +80,7 @@ void save_dense(
 	file_header.n = n;
 	file_header.matrix_type = detail::file_header::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 1);
+	file_header.version = detail::get_version_uint32(0, 2);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
