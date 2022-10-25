@@ -30,7 +30,7 @@ void comp(
 
 			base_norm2 += base * base;
 			diff_norm2 += diff * diff;
-			max_error += std::max(std::abs(diff), max_error);
+			max_error = std::max(std::abs(diff), max_error);
 		}
 	}
 	std::printf("relative residual = %e, max absolute error = %e\n",
@@ -59,7 +59,7 @@ int main(int argc, char** argv) {
 		using T = float;
 		comp<T>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
 	} else {
-		using T = float;
+		using T = double;
 		comp<T>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
 	}
 }
