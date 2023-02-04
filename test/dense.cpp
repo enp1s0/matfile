@@ -57,6 +57,7 @@ void test(const std::uint64_t m, const std::uint64_t n) {
 }
 
 int main() {
+	test<long double>(100, 100);
 	test<double>(100, 100);
 	test<float>(100, 100);
 }
