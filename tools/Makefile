@@ -1,7 +1,7 @@
 CXX=g++
 CXXFLAGS=-std=c++17 -I../include -fopenmp
 
-all: matfile-comp
+all: matfile-comp matfile-print
 
 matfile-%:src/%.cpp
 	$(CXX) $< -o $@ $(CXXFLAGS)
