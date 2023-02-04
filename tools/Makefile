@@ -1,9 +1,9 @@
 CXX=g++
 CXXFLAGS=-std=c++17 -I../include -fopenmp
 
-TARGET=matfile-comp
+all: matfile-comp matfile-print
 
-$(TARGET):src/comp.cpp
+matfile-%:src/%.cpp
 	$(CXX) $< -o $@ $(CXXFLAGS)
   
 clean:
