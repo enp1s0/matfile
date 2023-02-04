@@ -12,6 +12,10 @@ void print_matfile(
 
 	mtk::matfile::load_dense(mat_uptr.get(), m, matfile_path);
 
+	std::printf("# MATFILE path=%s, size=(%lu, %lu), dtype=%s\n",
+							matfile_path.c_str(), m, n,
+							mtk::matfile::detail::get_type_name_str<T>().c_str()
+							);
 	for (std::size_t i = 0; i < m; i++) {
 		for (std::size_t j = 0; j < n; j++) {
 			const auto v = mat_uptr.get()[i + j * m];
