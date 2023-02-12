@@ -135,6 +135,18 @@ inline data_t load_dtype(
 	return file_header.data_type;
 }
 
+inline std::size_t get_dtype_size(
+		const data_t dtype
+		) {
+	switch (dtype) {
+	case fp32: return 4;
+	case fp64: return 8;
+	case fp128: return 16;
+	default: return 0;
+	}
+	return 0;
+}
+
 template <class T>
 void load_dense(
 		T* const mat_ptr,
