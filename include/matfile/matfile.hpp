@@ -6,19 +6,22 @@
 
 namespace mtk {
 namespace matfile {
+enum data_t {
+	fp32,
+	fp64,
+	fp128
+};
+enum matrix_t {
+	dense
+};
+
 namespace detail {
 struct file_header {
 #ifndef MATFILE_USE_OLD_FORMAT
 	std::uint32_t version;
 #endif
-	enum data_t {
-		fp32,
-		fp64,
-		fp128
-	} data_type;
-	enum matrix_t {
-		dense
-	} matrix_type;
+	data_t data_type;
+	matrix_t matrix_type;
 	std::uint64_t m;
 	std::uint64_t n;
 	// For the future use
@@ -29,10 +32,10 @@ struct file_header {
 };
 
 template <class T>
-inline file_header::data_t get_data_type();
-template <> inline file_header::data_t get_data_type<long double>() {return file_header::fp128;};
-template <> inline file_header::data_t get_data_type<double     >() {return file_header::fp64;};
-template <> inline file_header::data_t get_data_type<float      >() {return file_header::fp32;};
+inline data_t get_data_type();
+template <> inline data_t get_data_type<long double>() {return fp128;};
+template <> inline data_t get_data_type<double     >() {return fp64;};
+template <> inline data_t get_data_type<float      >() {return fp32;};
 
 template <class T>
 inline std::string get_type_name_str();
@@ -40,9 +43,9 @@ template <> inline std::string get_type_name_str<long double>() {return "long do
 template <> inline std::string get_type_name_str<double     >() {return "double";}
 template <> inline std::string get_type_name_str<float      >() {return "float" ;}
 
-inline std::string get_data_type_str(const file_header::data_t data_t) {
-	if (data_t == file_header::data_t::fp32) return "float";
-	else if (data_t == file_header::data_t::fp64) return "double";
+inline std::string get_data_type_str(const data_t data_t) {
+	if (data_t == data_t::fp32) return "float";
+	else if (data_t == data_t::fp64) return "double";
 	else return "long double";
 }
 
@@ -78,9 +81,9 @@ void save_dense(
 	file_header.data_type = detail::get_data_type<T>();
 	file_header.m = m;
 	file_header.n = n;
-	file_header.matrix_type = detail::file_header::dense;
+	file_header.matrix_type = matrix_t::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 2);
+	file_header.version = detail::get_version_uint32(0, 3);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
@@ -96,24 +99,6 @@ void save_dense(
 	ofs.close();
 }
 
-template <class INT_T>
-inline void load_size(
-		INT_T& m,
-		INT_T& n,
-		const std::string mat_name
-		) {
-	std::ifstream ifs(mat_name, std::ios::binary);
-	if (!ifs) {
-		throw std::runtime_error("[matfile error] No such file : " + mat_name);
-	}
-
-	detail::file_header file_header;
-	ifs.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
-	ifs.close();
-
-	m = file_header.m;
-	n = file_header.n;
-}
 
 inline detail::file_header load_header(
 		const std::string mat_name
@@ -128,6 +113,26 @@ inline detail::file_header load_header(
 	ifs.close();
 
 	return file_header;
+}
+
+template <class INT_T>
+inline void load_size(
+		INT_T& m,
+		INT_T& n,
+		const std::string mat_name
+		) {
+	const auto file_header = load_header(mat_name);
+
+	m = file_header.m;
+	n = file_header.n;
+}
+
+inline data_t load_dtype(
+		const std::string mat_name
+		) {
+	const auto file_header = load_header(mat_name);
+
+	return file_header.data_type;
 }
 
 template <class T>
