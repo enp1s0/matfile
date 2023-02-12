@@ -30,7 +30,12 @@ void test(const std::uint64_t m, const std::uint64_t n) {
 		load_m, load_n,
 		file_name
 		);
-	std::printf("shape = (%lu, %lu)\n", load_m, load_n);
+	const auto dtype = mtk::matfile::load_dtype(file_name);
+	std::printf("shape = (%lu, %lu) , dtype = %s (%lu)\n",
+							load_m, load_n,
+							mtk::matfile::detail::get_data_type_str(dtype).c_str(),
+							mtk::matfile::get_dtype_size(dtype)
+							);
 
 	std::unique_ptr<T[]> load_mat(new T[load_m * load_n]);
 
@@ -46,7 +51,6 @@ void test(const std::uint64_t m, const std::uint64_t n) {
 		error = std::max(std::abs(static_cast<double>(mat.get()[i] - load_mat.get()[i])), error);
 	}
 
-	std::printf("[%10s dense matrix test] : ", mtk::matfile::detail::get_type_name_str<T>().c_str());
 	if (
 		(m == load_m) && (n == load_n) && (error < std::numeric_limits<T>::min())
 		) {
