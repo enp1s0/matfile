@@ -54,39 +54,39 @@ int main(int argc, char** argv) {
 	if (matrix_A_info.matrix_type != matrix_B_info.matrix_type) {std::printf("The matrix types are mismatch\n"); return 1;}
 	if (matrix_A_info.m != matrix_B_info.m || matrix_A_info.n != matrix_B_info.n) {std::printf("The matrix sizes are mismatch\n"); return 1;}
 
-	if (matrix_A_info.data_type == mtk::matfile::detail::file_header::fp32) {
+	if (matrix_A_info.data_type == mtk::matfile::fp32) {
 		using T = float;
-		if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp32) {
+		if (matrix_B_info.data_type == mtk::matfile::fp32) {
 			using S = float;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp64) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp64) {
 			using S = double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp128) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp128) {
 			using S = long double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
 		}
-	}else if (matrix_A_info.data_type == mtk::matfile::detail::file_header::fp64) {
+	}else if (matrix_A_info.data_type == mtk::matfile::fp64) {
 		using T = double;
-		if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp32) {
+		if (matrix_B_info.data_type == mtk::matfile::fp32) {
 			using S = float;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp64) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp64) {
 			using S = double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp128) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp128) {
 			using S = long double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
 		}
-	}else if (matrix_A_info.data_type == mtk::matfile::detail::file_header::fp128) {
+	}else if (matrix_A_info.data_type == mtk::matfile::fp128) {
 		using T = long double;
-		if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp32) {
+		if (matrix_B_info.data_type == mtk::matfile::fp32) {
 			using S = float;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp64) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp64) {
 			using S = double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
-		} else if (matrix_B_info.data_type == mtk::matfile::detail::file_header::fp128) {
+		} else if (matrix_B_info.data_type == mtk::matfile::fp128) {
 			using S = long double;
 			comp<T, S>(matrix_A_path, matrix_B_path, matrix_A_info.m, matrix_A_info.n);
 		}

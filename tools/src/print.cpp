@@ -34,11 +34,11 @@ int main(int argc, char** argv) {
 	const std::string matfile_path = argv[1];
 	const auto matfile_header = mtk::matfile::load_header(matfile_path);
 
-	if (matfile_header.data_type == mtk::matfile::detail::file_header::fp32) {
+	if (matfile_header.data_type == mtk::matfile::fp32) {
 		print_matfile<float>(matfile_path);
-	} else if (matfile_header.data_type == mtk::matfile::detail::file_header::fp64) {
+	} else if (matfile_header.data_type == mtk::matfile::fp64) {
 		print_matfile<double>(matfile_path);
-	} else if (matfile_header.data_type == mtk::matfile::detail::file_header::fp128) {
+	} else if (matfile_header.data_type == mtk::matfile::fp128) {
 		print_matfile<long double>(matfile_path);
 	}
 }
