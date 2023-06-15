@@ -62,7 +62,7 @@ pybind11::array_t<T, pybind11::array::f_style | pybind11::array::forcecast> load
 unsigned get_fp_bit(const std::string file_name) {
 	const auto info = mtk::matfile::load_header(file_name);
 
-	if (info.data_type == mtk::matfile::detail::file_header::fp32) {
+	if (info.data_type == mtk::matfile::fp32) {
 		return 32;
 	} else {
 		return 64;
