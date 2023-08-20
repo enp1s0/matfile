@@ -19,7 +19,7 @@ void save_dense(
 		m = buf.shape[0];
 		n = buf.shape[1];
 	} else {
-
+		throw std::runtime_error("ndim must be smaller than 3 but " + std::to_string(buf.ndim) + "is given.");
 	}
 	mtk::matfile::save_dense<T>(
 		m, n, static_cast<T*>(buf.ptr), m, file_name
@@ -32,7 +32,7 @@ pybind11::array_t<T, pybind11::array::f_style | pybind11::array::forcecast> load
 	) {
 
 	std::size_t m, n;
-	mtk::matfile::load_size(m, n, file_name);
+	mtk::matfile::load_matrix_size(m, n, file_name);
 
 	T* ptr = new T[m * n];
 	mtk::matfile::load_dense(ptr, m, file_name);
@@ -62,7 +62,7 @@ pybind11::array_t<T, pybind11::array::f_style | pybind11::array::forcecast> load
 unsigned get_fp_bit(const std::string file_name) {
 	const auto info = mtk::matfile::load_header(file_name);
 
-	if (info.data_type == mtk::matfile::fp32) {
+	if (info.data_type == mtk::matfile::data_t::fp32) {
 		return 32;
 	} else {
 		return 64;
