@@ -25,11 +25,7 @@ void test(const std::uint64_t m, const std::uint64_t n) {
 		);
 
 	// load meta data
-	std::uint64_t load_m, load_n;
-	mtk::matfile::load_size(
-		load_m, load_n,
-		file_name
-		);
+	const auto [load_m, load_n] = mtk::matfile::load_matrix_size(file_name);
 	const auto dtype = mtk::matfile::load_dtype(file_name);
 	std::printf("shape = (%lu, %lu) , dtype = %s (%lu)\n",
 							load_m, load_n,

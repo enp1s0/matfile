@@ -83,7 +83,7 @@ void save_dense(
 	file_header.n = n;
 	file_header.matrix_type = matrix_t::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 3);
+	file_header.version = detail::get_version_uint32(0, 4);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
@@ -116,7 +116,7 @@ inline detail::file_header load_header(
 }
 
 template <class INT_T>
-inline void load_size(
+inline void load_matrix_size(
 		INT_T& m,
 		INT_T& n,
 		const std::string mat_name
@@ -125,6 +125,16 @@ inline void load_size(
 
 	m = file_header.m;
 	n = file_header.n;
+}
+
+template <class INT_T = std::size_t>
+std::pair<INT_T, INT_T> load_matrix_size(
+		const std::string filepath
+		) {
+	std::size_t m, n;
+	load_matrix_size(m, n, filepath);
+
+	return std::pair<INT_T, INT_T>{m, n};
 }
 
 inline data_t load_dtype(
