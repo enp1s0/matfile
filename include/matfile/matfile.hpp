@@ -15,6 +15,11 @@ enum class matrix_t {
 	dense
 };
 
+enum class op_t {
+	transpose,
+	no_transpose
+};
+
 namespace detail {
 struct file_header {
 #ifndef MATFILE_USE_OLD_FORMAT
@@ -75,7 +80,8 @@ void save_dense(
 		const std::uint64_t n,
 		const T* const mat_ptr,
 		const std::uint64_t ld,
-		const std::string mat_name
+		const std::string mat_name,
+		const op_t op = op_t::no_transpose
 		) {
 	detail::file_header file_header;
 	file_header.data_type = detail::get_data_type<T>();
@@ -83,7 +89,7 @@ void save_dense(
 	file_header.n = n;
 	file_header.matrix_type = matrix_t::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 4);
+	file_header.version = detail::get_version_uint32(0, 5);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
@@ -91,7 +97,12 @@ void save_dense(
 
 	for (std::uint64_t j = 0; j < n; j++) {
 		for (std::uint64_t i = 0; i < m; i++) {
-			const auto index = i + j * ld;
+			std::size_t index;
+			if (op == op_t::no_transpose) {
+				index = i + j * ld;
+			} else {
+				index = j + i * ld;
+			}
 			const auto v = mat_ptr[index];
 			ofs.write(reinterpret_cast<const char*>(&v), sizeof(T));
 		}
@@ -161,7 +172,8 @@ template <class T>
 void load_dense(
 		T* const mat_ptr,
 		const std::uint64_t ld,
-		const std::string mat_name
+		const std::string mat_name,
+		const op_t op = op_t::no_transpose
 		) {
 	std::ifstream ifs(mat_name, std::ios::binary);
 	if (!ifs) {
@@ -179,7 +191,12 @@ void load_dense(
 
 	for (std::uint64_t j = 0; j < n; j++) {
 		for (std::uint64_t i = 0; i < m; i++) {
-			const auto index = i + j * ld;
+			std::size_t index;
+			if (op == op_t::no_transpose) {
+				index = i + j * ld;
+			} else {
+				index = j + i * ld;
+			}
 			T v;
 			ifs.read(reinterpret_cast<char*>(&v), sizeof(T));
 			mat_ptr[index] = v;
