@@ -187,7 +187,7 @@ void load_dense(
 	case data_t::fp32:
 		detail::load_dense_core<T, float>(mat_ptr, ifs, m, n, ld, op);
 		break;
-	ddefault:
+	default:
 		break;
 	}
 
