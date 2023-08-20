@@ -74,43 +74,6 @@ inline std::uint32_t get_major_version(
 }
 } // namespace detail
 
-template <class T>
-void save_dense(
-		const std::uint64_t m,
-		const std::uint64_t n,
-		const T* const mat_ptr,
-		const std::uint64_t ld,
-		const std::string mat_name,
-		const op_t op = op_t::no_transpose
-		) {
-	detail::file_header file_header;
-	file_header.data_type = detail::get_data_type<T>();
-	file_header.m = m;
-	file_header.n = n;
-	file_header.matrix_type = matrix_t::dense;
-#ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 5);
-#endif
-
-	std::ofstream ofs(mat_name, std::ios::binary);
-	ofs.write(reinterpret_cast<char*>(&file_header), sizeof(file_header));
-
-	for (std::uint64_t j = 0; j < n; j++) {
-		for (std::uint64_t i = 0; i < m; i++) {
-			std::size_t index;
-			if (op == op_t::no_transpose) {
-				index = i + j * ld;
-			} else {
-				index = j + i * ld;
-			}
-			const auto v = mat_ptr[index];
-			ofs.write(reinterpret_cast<const char*>(&v), sizeof(T));
-		}
-	}
-	ofs.close();
-}
-
-
 inline detail::file_header load_header(
 		const std::string mat_name
 		) {
@@ -168,6 +131,33 @@ inline std::size_t get_dtype_size(
 	return 0;
 }
 
+namespace detail {
+template <class T, class MATFILE_T>
+void load_dense_core(
+		T* const ptr,
+		std::ifstream& ifs,
+		const std::size_t m,
+		const std::size_t n,
+		const std::uint64_t ld,
+		const op_t op
+		) {
+	for (std::uint64_t j = 0; j < n; j++) {
+		for (std::uint64_t i = 0; i < m; i++) {
+			std::size_t index;
+			if (op == op_t::no_transpose) {
+				index = i + j * ld;
+			} else {
+				index = j + i * ld;
+			}
+			MATFILE_T v;
+			ifs.read(reinterpret_cast<char*>(&v), sizeof(T));
+			ptr[index] = v;
+		}
+	}
+}
+
+} // namespace detail
+
 template <class T>
 void load_dense(
 		T* const mat_ptr,
@@ -183,11 +173,47 @@ void load_dense(
 	detail::file_header file_header;
 	ifs.read(reinterpret_cast<char*>(&file_header), sizeof(file_header));
 
-	if (file_header.data_type != detail::get_data_type<T>()) {
-		throw std::runtime_error("[matfile error] matrix type is mismatch : data_t = " + detail::get_data_type_str(file_header.data_type) + ", T = " + detail::get_type_name_str<T>());
-	}
 	const std::uint64_t m = file_header.m;
 	const std::uint64_t n = file_header.n;
+	const auto dtype = file_header.data_type;
+
+	switch (dtype) {
+	case data_t::fp128:
+		detail::load_dense_core<T, long double>(mat_ptr, ifs, m, n, ld, op);
+		break;
+	case data_t::fp64:
+		detail::load_dense_core<T, double>(mat_ptr, ifs, m, n, ld, op);
+		break;
+	case data_t::fp32:
+		detail::load_dense_core<T, float>(mat_ptr, ifs, m, n, ld, op);
+		break;
+	ddefault:
+		break;
+	}
+
+	ifs.close();
+}
+
+template <class T, class MATFILE_T = T>
+void save_dense(
+		const std::uint64_t m,
+		const std::uint64_t n,
+		const T* const mat_ptr,
+		const std::uint64_t ld,
+		const std::string mat_name,
+		const op_t op = op_t::no_transpose
+		) {
+	detail::file_header file_header;
+	file_header.data_type = detail::get_data_type<MATFILE_T>();
+	file_header.m = m;
+	file_header.n = n;
+	file_header.matrix_type = matrix_t::dense;
+#ifndef OLD_VERSION
+	file_header.version = detail::get_version_uint32(0, 6);
+#endif
+
+	std::ofstream ofs(mat_name, std::ios::binary);
+	ofs.write(reinterpret_cast<char*>(&file_header), sizeof(file_header));
 
 	for (std::uint64_t j = 0; j < n; j++) {
 		for (std::uint64_t i = 0; i < m; i++) {
@@ -197,13 +223,13 @@ void load_dense(
 			} else {
 				index = j + i * ld;
 			}
-			T v;
-			ifs.read(reinterpret_cast<char*>(&v), sizeof(T));
-			mat_ptr[index] = v;
+			const MATFILE_T v = mat_ptr[index];
+			ofs.write(reinterpret_cast<const char*>(&v), sizeof(MATFILE_T));
 		}
 	}
-	ifs.close();
+	ofs.close();
 }
+
 
 namespace matrix_market {
 namespace detail {
