@@ -3,10 +3,19 @@
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
+#include <cstdint>
 
 namespace mtk {
 namespace matfile {
 enum class data_t {
+	int8,
+	int16,
+	int32,
+	int64,
+	uint8,
+	uint16,
+	uint32,
+	uint64,
 	fp32,
 	fp64,
 	fp128
@@ -38,20 +47,40 @@ struct file_header {
 
 template <class T>
 inline data_t get_data_type();
-template <> inline data_t get_data_type<long double>() {return data_t::fp128;};
-template <> inline data_t get_data_type<double     >() {return data_t::fp64;};
-template <> inline data_t get_data_type<float      >() {return data_t::fp32;};
-
-template <class T>
-inline std::string get_type_name_str();
-template <> inline std::string get_type_name_str<long double>() {return "long double";}
-template <> inline std::string get_type_name_str<double     >() {return "double";}
-template <> inline std::string get_type_name_str<float      >() {return "float" ;}
+template <> inline data_t get_data_type<long double  >() {return data_t::fp128 ;};
+template <> inline data_t get_data_type<double       >() {return data_t::fp64  ;};
+template <> inline data_t get_data_type<float        >() {return data_t::fp32  ;};
+template <> inline data_t get_data_type<std::int64_t >() {return data_t::int64 ;};
+template <> inline data_t get_data_type<std::int32_t >() {return data_t::int32 ;};
+template <> inline data_t get_data_type<std::int16_t >() {return data_t::int16 ;};
+template <> inline data_t get_data_type<std::int8_t  >() {return data_t::int8  ;};
+template <> inline data_t get_data_type<std::uint64_t>() {return data_t::uint64;};
+template <> inline data_t get_data_type<std::uint32_t>() {return data_t::uint32;};
+template <> inline data_t get_data_type<std::uint16_t>() {return data_t::uint16;};
+template <> inline data_t get_data_type<std::uint8_t >() {return data_t::uint8 ;};
 
 inline std::string get_data_type_str(const data_t data_t) {
-	if (data_t == data_t::fp32) return "float";
-	else if (data_t == data_t::fp64) return "double";
-	else return "long double";
+	switch (data_t) {
+	case data_t::fp128 : return "long double";
+	case data_t::fp64  : return "double"     ;
+	case data_t::fp32  : return "float"      ;
+	case data_t::int64 : return "int64_t"    ;
+	case data_t::int32 : return "int32_t"    ;
+	case data_t::int16 : return "int16_t"    ;
+	case data_t::int8  : return "int8_t"     ;
+	case data_t::uint64: return "uint64_t"   ;
+	case data_t::uint32: return "uint32_t"   ;
+	case data_t::uint16: return "uint16_t"   ;
+	case data_t::uint8 : return "uint8_t"    ;
+	default:
+		break;
+	}
+	return "Unknown";
+}
+
+template <class T>
+inline std::string get_type_name_str() {
+	return get_data_type_str(get_data_type<T>());
 }
 
 inline std::uint32_t get_version_uint32(
@@ -123,10 +152,18 @@ inline std::size_t get_dtype_size(
 		const data_t dtype
 		) {
 	switch (dtype) {
+	case data_t::int8: return 1;
+	case data_t::int16: return 2;
+	case data_t::int32: return 4;
+	case data_t::int64: return 8;
+	case data_t::uint8: return 1;
+	case data_t::uint16: return 2;
+	case data_t::uint32: return 4;
+	case data_t::uint64: return 8;
 	case data_t::fp32: return 4;
 	case data_t::fp64: return 8;
 	case data_t::fp128: return 16;
-	default: return 0;
+	default: break;
 	}
 	return 0;
 }
@@ -178,15 +215,21 @@ void load_dense(
 	const auto dtype = file_header.data_type;
 
 	switch (dtype) {
-	case data_t::fp128:
-		detail::load_dense_core<T, long double>(mat_ptr, ifs, m, n, ld, op);
-		break;
-	case data_t::fp64:
-		detail::load_dense_core<T, double>(mat_ptr, ifs, m, n, ld, op);
-		break;
-	case data_t::fp32:
-		detail::load_dense_core<T, float>(mat_ptr, ifs, m, n, ld, op);
-		break;
+#define LOAD_DENSE_CODE(MATFILE_T, data_type) \
+	case data_t::data_type: \
+		detail::load_dense_core<T, MATFILE_T>(mat_ptr, ifs, m, n, ld, op); \
+		break
+		LOAD_DENSE_CODE(long double, fp128);
+		LOAD_DENSE_CODE(double, fp64);
+		LOAD_DENSE_CODE(float, fp32);
+		LOAD_DENSE_CODE(std::uint8_t , uint8);
+		LOAD_DENSE_CODE(std::uint16_t, uint16);
+		LOAD_DENSE_CODE(std::uint32_t, uint32);
+		LOAD_DENSE_CODE(std::uint64_t, uint64);
+		LOAD_DENSE_CODE(std::int8_t , int8);
+		LOAD_DENSE_CODE(std::int16_t, int16);
+		LOAD_DENSE_CODE(std::int32_t, int32);
+		LOAD_DENSE_CODE(std::int64_t, int64);
 	default:
 		break;
 	}
@@ -209,7 +252,7 @@ void save_dense(
 	file_header.n = n;
 	file_header.matrix_type = matrix_t::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 6);
+	file_header.version = detail::get_version_uint32(0, 7);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
