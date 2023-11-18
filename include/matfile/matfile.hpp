@@ -252,7 +252,7 @@ void save_dense(
 	file_header.n = n;
 	file_header.matrix_type = matrix_t::dense;
 #ifndef OLD_VERSION
-	file_header.version = detail::get_version_uint32(0, 6);
+	file_header.version = detail::get_version_uint32(0, 7);
 #endif
 
 	std::ofstream ofs(mat_name, std::ios::binary);
