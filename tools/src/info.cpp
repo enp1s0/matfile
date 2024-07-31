@@ -8,7 +8,7 @@ void print_info(
 	const std::string matfile_path
 	) {
 	std::size_t m, n;
-	mtk::matfile::load_size(m, n, matfile_path);
+	mtk::matfile::load_matrix_size(m, n, matfile_path);
 
 	std::printf("# size  : %lu x %lu\n", m, n);
 	std::printf("# dtype : %s\n", mtk::matfile::detail::get_type_name_str<T>().c_str());
@@ -34,9 +34,9 @@ int main(
 		std::printf("## ---- [%d] path : %s ----\n", i, matfile_path.c_str());
 
 		const auto dtype = mtk::matfile::load_dtype(matfile_path);
-		if (dtype == mtk::matfile::fp32) {
+		if (dtype == mtk::matfile::data_t::fp32) {
 			print_info<float >(matfile_path);
-		} else if (dtype == mtk::matfile::fp64) {
+		} else if (dtype == mtk::matfile::data_t::fp64) {
 			print_info<double>(matfile_path);
 		}
 	}

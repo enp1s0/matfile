@@ -12,7 +12,7 @@ void print_matfile(
 	const bool print_hex_flag
 	) {
 	std::size_t m, n;
-	mtk::matfile::load_size(m, n, matfile_path);
+	mtk::matfile::load_matrix_size(m, n, matfile_path);
 	std::unique_ptr<T> mat_uptr(new T[m * n]);
 
 	mtk::matfile::load_dense(mat_uptr.get(), m, matfile_path);
@@ -52,11 +52,11 @@ int main(int argc, char** argv) {
 		const std::string matfile_path = argv[path_index];
 		const auto matfile_header = mtk::matfile::load_header(matfile_path);
 
-		if (matfile_header.data_type == mtk::matfile::fp32) {
+		if (matfile_header.data_type == mtk::matfile::data_t::fp32) {
 			print_matfile<float>(matfile_path, print_hex_flag);
-		} else if (matfile_header.data_type == mtk::matfile::fp64) {
+		} else if (matfile_header.data_type == mtk::matfile::data_t::fp64) {
 			print_matfile<double>(matfile_path, print_hex_flag);
-		} else if (matfile_header.data_type == mtk::matfile::fp128) {
+		} else if (matfile_header.data_type == mtk::matfile::data_t::fp128) {
 			print_matfile<long double>(matfile_path, print_hex_flag);
 		}
 	}
