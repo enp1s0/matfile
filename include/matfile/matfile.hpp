@@ -140,24 +140,6 @@ std::pair<INT_T, INT_T> load_matrix_size(
 	return std::pair<INT_T, INT_T>{m, n};
 }
 
-template <class INT_T>
-inline void load_size(
-		INT_T& m,
-		INT_T& n,
-		const std::string mat_name
-		) {
-#warning "`load_size` will be deprecated. Use load_matrix_size instead"
-  load_matrix_size(m, n, mat_name);
-}
-
-template <class INT_T>
-inline std::pair<INT_T, INT_T> load_size(
-		const std::string mat_name
-		) {
-#warning "`load_size` will be deprecated. Use load_matrix_size instead"
-  return load_matrix_size(mat_name);
-}
-
 inline data_t load_dtype(
 		const std::string mat_name
 		) {
@@ -460,6 +442,43 @@ inline void print_matrix(
 		const std::string name = ""
 		) {
 	print_matrix(m, n, ptr, m, name);
+}
+
+namespace detail {
+template <class INT_T>
+struct
+load_size_proxy {
+[[deprecated("Reason: `load_size` is deprecated. Please use load_matrix_size instead.")]]
+  void operator()(
+		INT_T& m,
+		INT_T& n,
+		const std::string mat_name
+      ) {
+    load_matrix_size(m, n, mat_name);
+  }
+[[deprecated("Reason: `load_size` is deprecated. Please use load_matrix_size instead.")]]
+  std::pair<INT_T, INT_T> operator()(
+		const std::string mat_name
+      ) {
+    return load_matrix_size(mat_name);
+  }
+};
+} // namespace detail
+
+template <class INT_T>
+inline void load_size(
+		INT_T& m,
+		INT_T& n,
+		const std::string mat_name
+		) {
+  detail::load_size_proxy<INT_T>{}(m, n, mat_name);
+}
+
+template <class INT_T = std::uint64_t>
+inline std::pair<INT_T, INT_T> load_size(
+		const std::string mat_name
+		) {
+  return detail::load_size_proxy<INT_T>{}(mat_name);
 }
 } // namespace matfile
 } // namespace mtk
