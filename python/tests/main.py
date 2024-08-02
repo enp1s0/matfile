@@ -11,15 +11,27 @@ def eval_mateval(dtype):
     print("saved dtype = ", mat.dtype)
     print("loaded shape = ", mat0.shape)
     print("loaded dtype = ", mat0.dtype)
-    print("error = ", np.linalg.norm(mat - mat0))
+    error = np.linalg.norm(mat - mat0)
+    print("error = ", error)
+    if error == 0:
+        return 0
+    return 1
 
-eval_mateval(np.float32)
-eval_mateval(np.float64)
-eval_mateval(np.int8)
-eval_mateval(np.int16)
-eval_mateval(np.int32)
-eval_mateval(np.int64)
-eval_mateval(np.uint8)
-eval_mateval(np.uint16)
-eval_mateval(np.uint32)
-eval_mateval(np.uint64)
+num_errors = 0
+num_errors += eval_mateval(np.float32)
+num_errors += eval_mateval(np.float64)
+num_errors += eval_mateval(np.int8)
+num_errors += eval_mateval(np.int16)
+num_errors += eval_mateval(np.int32)
+num_errors += eval_mateval(np.int64)
+num_errors += eval_mateval(np.uint8)
+num_errors += eval_mateval(np.uint16)
+num_errors += eval_mateval(np.uint32)
+num_errors += eval_mateval(np.uint64)
+
+if __name__ == "__main__":
+    print(f"Num errors = {num_errors}")
+    if num_errors == 0:
+        exit(0)
+    else:
+        exit(1)

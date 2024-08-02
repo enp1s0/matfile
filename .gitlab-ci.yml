@@ -1,0 +1,16 @@
+cpp_test:
+  image: ubuntu:jammy
+  before_script:
+    - apt update && apt install -y --no-install-recommends build-essential
+  script:
+    - cd test && make
+    - ./dense.test
+
+python_test:
+  image: python:3.12.4-bullseye
+  before_script:
+    - pip install pybind11 numpy
+  script:
+    - cd python
+    - pip install .
+    - python tests/main.py
