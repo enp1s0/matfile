@@ -140,6 +140,24 @@ std::pair<INT_T, INT_T> load_matrix_size(
 	return std::pair<INT_T, INT_T>{m, n};
 }
 
+template <class INT_T>
+inline void load_size(
+		INT_T& m,
+		INT_T& n,
+		const std::string mat_name
+		) {
+#warning "`load_size` will be deprecated. Use load_matrix_size instead"
+  load_matrix_size(m, n, mat_name);
+}
+
+template <class INT_T>
+inline std::pair<INT_T, INT_T> load_size(
+		const std::string mat_name
+		) {
+#warning "`load_size` will be deprecated. Use load_matrix_size instead"
+  return load_matrix_size(mat_name);
+}
+
 inline data_t load_dtype(
 		const std::string mat_name
 		) {
