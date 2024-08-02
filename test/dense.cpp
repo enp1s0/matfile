@@ -66,7 +66,7 @@ int main() {
 	unsigned num_tested = 0;
 	for (const auto m : std::vector<std::uint64_t>{10, 100, 1000}) {
 		for (const auto n : std::vector<std::uint64_t>{10, 100, 1000}) {
-			for (const auto ld_d  : std::vector<std::uint64_t>{10, 100, 1000}) {
+			for (const auto ld_d  : std::vector<std::uint64_t>{0, 10, 100, 1000}) {
 				const auto ld = m + ld_d;
 
 				num_failed += standard_test<long double  >(m, n, ld); num_tested++;
