@@ -251,7 +251,7 @@ void save_dense(
 	file_header.m = m;
 	file_header.n = n;
 	file_header.matrix_type = matrix_t::dense;
-#ifndef OLD_VERSION
+#ifndef MATFILE_USE_OLD_FORMAT
 	file_header.version = detail::get_version_uint32(0, 7);
 #endif
 
