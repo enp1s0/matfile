@@ -5,6 +5,9 @@ cpp_test:
   script:
     - cd test && make
     - ./dense.test
+    - make clean
+    - make TEST_OLD_FORMAT=1
+    - ./dense.test
 
 python_test:
   image: python:3.12.4-bullseye
